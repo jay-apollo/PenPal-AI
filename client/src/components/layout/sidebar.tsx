@@ -89,8 +89,8 @@ export function Sidebar({
 
   // Determine appropriate sidebar class based on mobile state
   const sidebarClasses = cn(
-    "fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-20 transition-transform duration-300 transform lg:translate-x-0",
-    isMobileOpen ? "translate-x-0" : "-translate-x-full",
+    "fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-20 transition-transform duration-300 transform md:translate-x-0",
+    isMobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
     className
   );
 

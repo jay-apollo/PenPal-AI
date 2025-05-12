@@ -28,7 +28,8 @@ export function PageContainer({ children, title }: PageContainerProps) {
         className="hidden md:block" 
       />
       
-      <div className="flex flex-col flex-1 overflow-hidden">
+      {/* Added md:ml-64 to offset the main content by the width of the sidebar */}
+      <div className="flex flex-col flex-1 overflow-hidden w-full md:ml-64">
         <Header 
           title={title || ""} 
           onMobileMenuClick={handleMobileMenuToggle} 
