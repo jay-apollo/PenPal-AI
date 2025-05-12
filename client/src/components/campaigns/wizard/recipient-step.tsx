@@ -9,14 +9,15 @@ import { Search, Users, UserCheck, UserX } from "lucide-react";
 import { Recipient } from "@shared/schema";
 
 interface RecipientStepProps {
-  selectedRecipientIds: number[];
-  onSelectRecipients: (recipientIds: number[]) => void;
+  selectedRecipients?: number[];
+  onUpdateSelection: (recipientIds: number[]) => void;
 }
 
 export function RecipientStep({
-  selectedRecipientIds,
-  onSelectRecipients,
+  selectedRecipients = [],
+  onUpdateSelection,
 }: RecipientStepProps) {
+  const selectedRecipientIds = selectedRecipients;
   const [searchQuery, setSearchQuery] = useState("");
 
   // Fetch recipients

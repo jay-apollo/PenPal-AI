@@ -1,0 +1,28 @@
+Step 1: Campaign Details
+Prompt:
+Design a user interface allowing the user to clearly enter and confirm the campaign name and select or type a campaign objective. Ensure the interface clearly guides the user with placeholder text, dropdown options, and intuitive navigation to the next step.
+
+📥 Step 2: Choose Recipients
+Prompt:
+Create a clear interface enabling users to add recipients through three methods: manual entry, CSV upload, and CRM selection. Clearly display success or error messages during recipient import or validation, and provide visual feedback summarizing the total recipients selected.
+
+📃 Step 3: Select Letter Template
+Prompt:
+Develop an interface where users can select from existing letter templates or easily create a new one on the spot. Include an intuitive visual preview of the chosen template populated with placeholder recipient details.
+
+✏️ Step 4: Personalize & Review
+Prompt:
+Build an easy-to-use personalization interface allowing users to modify merge fields such as recipient names, company, or other CRM data. Clearly show real-time letter previews to visualize personalized content changes.
+
+📅 Step 5: Schedule & Delivery
+Prompt:
+Design a user-friendly scheduling and delivery interface, clearly providing options to send letters immediately or schedule them for a later date. Include final recipient address verification, clear date-picker UI, and a concise summary of scheduling selections.
+
+✅ Step 6: Launch Campaign
+Prompt:
+Implement a clear, final campaign confirmation screen with a prominent button to officially launch the campaign. Provide immediate visual feedback that the campaign has been successfully created, with status and next steps clearly indicated.
+
+📈 Step 7: Campaign Tracking (Post-Launch)
+Prompt:
+Create an informative campaign tracking dashboard automatically accessible after campaign launch, clearly displaying key campaign metrics, status updates (sent, delivered, responses), and relevant visual analytics to easily monitor progress.
+

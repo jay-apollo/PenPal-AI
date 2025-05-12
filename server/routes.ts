@@ -85,31 +85,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/auth/user", isAuthenticated, authController.getCurrentUser);
 
   // Campaign routes
-  app.get("/api/campaigns", isAuthenticated, campaignController.getCampaigns);
-  app.get("/api/campaigns/:id", isAuthenticated, campaignController.getCampaign);
-  app.post("/api/campaigns", isAuthenticated, campaignController.createCampaign);
-  app.put("/api/campaigns/:id", isAuthenticated, campaignController.updateCampaign);
-  app.delete("/api/campaigns/:id", isAuthenticated, campaignController.deleteCampaign);
+  app.get("/api/campaigns", campaignController.getCampaigns);
+  app.get("/api/campaigns/:id", campaignController.getCampaign);
+  app.post("/api/campaigns", campaignController.createCampaign);
+  app.put("/api/campaigns/:id", campaignController.updateCampaign);
+  app.delete("/api/campaigns/:id", campaignController.deleteCampaign);
 
   // Recipient routes
-  app.get("/api/recipients", isAuthenticated, recipientController.getRecipients);
-  app.get("/api/recipients/:id", isAuthenticated, recipientController.getRecipient);
-  app.post("/api/recipients", isAuthenticated, recipientController.createRecipient);
-  app.post("/api/recipients/batch", isAuthenticated, recipientController.createBatchRecipients);
-  app.put("/api/recipients/:id", isAuthenticated, recipientController.updateRecipient);
-  app.delete("/api/recipients/:id", isAuthenticated, recipientController.deleteRecipient);
+  app.get("/api/recipients", recipientController.getRecipients);
+  app.get("/api/recipients/:id", recipientController.getRecipient);
+  app.post("/api/recipients", recipientController.createRecipient);
+  app.post("/api/recipients/batch", recipientController.createBatchRecipients);
+  app.put("/api/recipients/:id", recipientController.updateRecipient);
+  app.delete("/api/recipients/:id", recipientController.deleteRecipient);
 
   // Template routes
-  app.get("/api/templates", isAuthenticated, templateController.getTemplates);
-  app.get("/api/templates/:id", isAuthenticated, templateController.getTemplate);
-  app.post("/api/templates", isAuthenticated, templateController.createTemplate);
-  app.put("/api/templates/:id", isAuthenticated, templateController.updateTemplate);
-  app.delete("/api/templates/:id", isAuthenticated, templateController.deleteTemplate);
+  app.get("/api/templates", templateController.getTemplates);
+  app.get("/api/templates/:id", templateController.getTemplate);
+  app.post("/api/templates", templateController.createTemplate);
+  app.put("/api/templates/:id", templateController.updateTemplate);
+  app.delete("/api/templates/:id", templateController.deleteTemplate);
 
   // Letters routes
-  app.get("/api/letters", isAuthenticated, templateController.getLetters);
-  app.post("/api/letters/generate", isAuthenticated, templateController.generateLetter);
-  app.post("/api/letters/export", isAuthenticated, templateController.exportLetter);
+  app.get("/api/letters", templateController.getLetters);
+  app.post("/api/letters/generate", templateController.generateLetter);
+  app.post("/api/letters/export", templateController.exportLetter);
 
   const httpServer = createServer(app);
   return httpServer;
