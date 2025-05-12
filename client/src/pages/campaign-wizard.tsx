@@ -159,7 +159,15 @@ function CampaignWizard() {
       });
       
       if (!response.ok) {
-        throw new Error('Failed to create campaign');
+        // Try to get more detailed error information
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Campaign creation failed:", response.status, errorData);
+        
+        if (errorData.errors) {
+          throw new Error(`Validation errors: ${JSON.stringify(errorData.errors)}`);
+        }
+        
+        throw new Error(`Failed to create campaign: ${response.status} ${response.statusText}`);
       }
       
       return response.json();
@@ -177,6 +185,7 @@ function CampaignWizard() {
         description: error.message,
         variant: "destructive",
       });
+      console.error("Campaign creation error:", error);
       setIsSubmitting(false);
     }
   });
@@ -195,13 +204,27 @@ function CampaignWizard() {
       description: campaignData.description || null,
       status: "scheduled",
       templateId: campaignData.templateId,
-      recipientIds: campaignData.recipientIds,
+      recipientIds: campaignData.recipientIds.map(id => id.toString()), // Convert to string array as expected by schema
       startDate: campaignData.startDate,
-      settings: {
-        handwritingStyle: campaignData.handwritingStyle as HandwritingStyle,
-        paperType: campaignData.paperType as PaperType
-      }
+      // The createdAt field will be added by the server
     };
+
+    // Store handwriting style and paper type as metadata in description
+    // if needed for future reference
+    if (campaignData.handwritingStyle || campaignData.paperType) {
+      const metadataStr = JSON.stringify({
+        handwritingStyle: campaignData.handwritingStyle,
+        paperType: campaignData.paperType
+      });
+      
+      if (submissionData.description) {
+        submissionData.description += `\n\nSettings: ${metadataStr}`;
+      } else {
+        submissionData.description = `Settings: ${metadataStr}`;
+      }
+    }
+
+    console.log("Submitting campaign data:", submissionData);
     
     createCampaign(submissionData);
   };
