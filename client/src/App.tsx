@@ -1,4 +1,4 @@
-import { Switch, Route, useLocation } from "wouter";
+import { Switch, Route } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
@@ -13,28 +13,6 @@ import Analytics from "@/pages/analytics";
 import Integrations from "@/pages/integrations";
 import Settings from "@/pages/settings";
 import Help from "@/pages/help";
-import { useAuth } from "./contexts/auth-context";
-import { Spinner } from "@/components/ui/spinner";
-
-function PrivateRoute({ component: Component, ...rest }: any) {
-  const { user, loading } = useAuth();
-  const [, navigate] = useLocation();
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center w-full min-h-screen">
-        <Spinner size="lg" />
-      </div>
-    );
-  }
-
-  if (!user) {
-    navigate("/login");
-    return null;
-  }
-
-  return <Component {...rest} />;
-}
 
 function App() {
   return (
@@ -42,19 +20,19 @@ function App() {
       <Toaster />
       <Switch>
         <Route path="/login" component={Login} />
-        <Route path="/" component={() => <PrivateRoute component={Dashboard} />} />
-        <Route path="/dashboard" component={() => <PrivateRoute component={Dashboard} />} />
-        <Route path="/campaigns" component={() => <PrivateRoute component={Campaigns} />} />
-        <Route path="/campaign-wizard" component={() => <PrivateRoute component={CampaignWizard} />} />
-        <Route path="/campaign-wizard/:step" component={(params) => <PrivateRoute component={CampaignWizard} params={params} />} />
-        <Route path="/recipients" component={() => <PrivateRoute component={Recipients} />} />
-        <Route path="/templates" component={() => <PrivateRoute component={Templates} />} />
-        <Route path="/template-editor" component={() => <PrivateRoute component={TemplateEditor} />} />
-        <Route path="/template-editor/:id" component={(params) => <PrivateRoute component={TemplateEditor} params={params} />} />
-        <Route path="/analytics" component={() => <PrivateRoute component={Analytics} />} />
-        <Route path="/integrations" component={() => <PrivateRoute component={Integrations} />} />
-        <Route path="/settings" component={() => <PrivateRoute component={Settings} />} />
-        <Route path="/help" component={() => <PrivateRoute component={Help} />} />
+        <Route path="/" component={Dashboard} />
+        <Route path="/dashboard" component={Dashboard} />
+        <Route path="/campaigns" component={Campaigns} />
+        <Route path="/campaign-wizard" component={CampaignWizard} />
+        <Route path="/campaign-wizard/:step" component={CampaignWizard} />
+        <Route path="/recipients" component={Recipients} />
+        <Route path="/templates" component={Templates} />
+        <Route path="/template-editor" component={TemplateEditor} />
+        <Route path="/template-editor/:id" component={TemplateEditor} />
+        <Route path="/analytics" component={Analytics} />
+        <Route path="/integrations" component={Integrations} />
+        <Route path="/settings" component={Settings} />
+        <Route path="/help" component={Help} />
         <Route component={NotFound} />
       </Switch>
     </TooltipProvider>

@@ -3,7 +3,6 @@ import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useAuth } from "@/contexts/auth-context";
 import {
   LayoutDashboard,
   Bell,
@@ -29,7 +28,6 @@ export function Sidebar({
   onMobileClose,
 }: SidebarProps) {
   const [location] = useLocation();
-  const { user, logout } = useAuth();
   
   const navItems = [
     {
@@ -86,7 +84,7 @@ export function Sidebar({
   
   // Handle logout
   const handleLogout = async () => {
-    await logout();
+    // Removed logout functionality
   };
 
   // Determine appropriate sidebar class based on mobile state
@@ -136,26 +134,17 @@ export function Sidebar({
         <div className="p-4 border-t">
           <div className="flex items-center">
             <div className="h-8 w-8 rounded-full bg-neutral-200 flex items-center justify-center overflow-hidden">
-              {user?.firstName ? (
-                <span className="text-sm font-medium">
-                  {user.firstName.charAt(0)}
-                  {user.lastName?.charAt(0)}
-                </span>
-              ) : (
-                <img
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                  alt="User profile"
-                  className="h-full w-full object-cover"
-                />
-              )}
+              <img
+                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                alt="User profile"
+                className="h-full w-full object-cover"
+              />
             </div>
             <div className="ml-3">
               <p className="text-sm font-medium text-neutral-700">
-                {user?.firstName
-                  ? `${user.firstName} ${user.lastName || ""}`
-                  : user?.username}
+                Demo User
               </p>
-              <p className="text-xs text-neutral-500">{user?.email}</p>
+              <p className="text-xs text-neutral-500">user@example.com</p>
             </div>
           </div>
           <Button

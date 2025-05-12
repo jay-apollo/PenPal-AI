@@ -10,11 +10,9 @@ import { TemplateList } from "@/components/dashboard/template-list";
 import { ActivityTable } from "@/components/dashboard/activity-table";
 import { Plus } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
-import { useAuth } from "@/contexts/auth-context";
 
 function Dashboard() {
   const [, navigate] = useLocation();
-  const { user } = useAuth();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   // Fetch campaigns
@@ -56,7 +54,7 @@ function Dashboard() {
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8">
             <div>
               <h1 className="text-2xl font-bold text-neutral-900">
-                Welcome back, {user?.firstName || user?.username}!
+                Welcome back!
               </h1>
               <p className="mt-1 text-sm text-neutral-500">
                 Here's what's happening with your campaigns today.

@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Bell, Settings, Menu } from "lucide-react";
-import { useAuth } from "@/contexts/auth-context";
 
 interface HeaderProps {
   title: string;
@@ -39,7 +38,6 @@ function getPageTitle(path: string): string {
 
 export function Header({ onMobileMenuClick }: HeaderProps) {
   const [location] = useLocation();
-  const { user } = useAuth();
   const [pageTitle, setPageTitle] = useState("Dashboard");
 
   useEffect(() => {
@@ -72,18 +70,11 @@ export function Header({ onMobileMenuClick }: HeaderProps) {
             </Button>
             <div className="relative">
               <div className="h-8 w-8 rounded-full bg-neutral-200 flex items-center justify-center overflow-hidden">
-                {user?.firstName ? (
-                  <span className="text-sm font-medium">
-                    {user.firstName.charAt(0)}
-                    {user.lastName?.charAt(0)}
-                  </span>
-                ) : (
-                  <img
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                    alt="User profile"
-                    className="h-full w-full object-cover"
-                  />
-                )}
+                <img
+                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                  alt="User profile"
+                  className="h-full w-full object-cover"
+                />
               </div>
             </div>
           </div>
