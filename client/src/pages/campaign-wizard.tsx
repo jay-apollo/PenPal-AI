@@ -264,7 +264,7 @@ function CampaignWizard() {
                 campaignData={campaignData}
                 onEditSection={(section) => {
                   // Map section names to step IDs
-                  const sectionToStep = {
+                  const sectionToStep: Record<string, string> = {
                     recipients: "recipients",
                     template: "template",
                     personalize: "personalize",

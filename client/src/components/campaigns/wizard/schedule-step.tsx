@@ -14,44 +14,29 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarIcon, Clock, Send, Calendar as CalendarIcon2 } from "lucide-react";
 
 interface ScheduleStepProps {
-  campaignData: {
-    startDate?: Date;
-  };
-  onUpdateCampaign: (data: any) => void;
-  onFinish: () => void;
+  startDate?: Date | null;
+  onUpdateSchedule: (startDate: Date | null) => void;
 }
 
 export function ScheduleStep({
-  campaignData,
-  onUpdateCampaign,
-  onFinish,
+  startDate,
+  onUpdateSchedule,
 }: ScheduleStepProps) {
   const [activeTab, setActiveTab] = useState("schedule");
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Handle date change
   const handleDateChange = (date: Date | undefined) => {
-    onUpdateCampaign({ ...campaignData, startDate: date });
+    onUpdateSchedule(date || null);
   };
 
   const handleSendNow = () => {
-    setIsSubmitting(true);
-    // In a real implementation, add validation and API calls
-    setTimeout(() => {
-      onFinish();
-      setIsSubmitting(false);
-    }, 1000);
+    // For "Send Now", we'll set the start date to the current date
+    onUpdateSchedule(new Date());
   };
 
   const handleSchedule = () => {
-    if (!campaignData.startDate) return;
-    
-    setIsSubmitting(true);
-    // In a real implementation, add validation and API calls
-    setTimeout(() => {
-      onFinish();
-      setIsSubmitting(false);
-    }, 1000);
+    // The date is already updated via the calendar
+    // So we don't need to do anything additional here
   };
 
   return (
@@ -82,7 +67,7 @@ export function ScheduleStep({
                   </h3>
                   <Calendar
                     mode="single"
-                    selected={campaignData.startDate}
+                    selected={startDate || undefined}
                     onSelect={handleDateChange}
                     initialFocus
                     disabled={{ before: new Date() }}
@@ -150,10 +135,10 @@ export function ScheduleStep({
                   </div>
                   
                   {/* Schedule summary */}
-                  {campaignData.startDate && (
+                  {startDate && (
                     <div className="mt-6 p-4 bg-primary-50 rounded-md">
                       <p className="text-primary-700 font-medium">
-                        Scheduled for: {format(campaignData.startDate, "PPP")}
+                        Scheduled for: {format(startDate, "PPP")}
                       </p>
                       <p className="text-sm text-primary-600 mt-1">
                         All letters will be processed and sent on this date.
@@ -166,7 +151,7 @@ export function ScheduleStep({
               <div className="mt-8 flex justify-end">
                 <Button
                   onClick={handleSchedule}
-                  disabled={!campaignData.startDate || isSubmitting}
+                  disabled={!startDate}
                 >
                   Schedule Campaign
                 </Button>
@@ -187,7 +172,6 @@ export function ScheduleStep({
                 </p>
                 <Button
                   onClick={handleSendNow}
-                  disabled={isSubmitting}
                   className="min-w-[150px]"
                 >
                   Send Now
