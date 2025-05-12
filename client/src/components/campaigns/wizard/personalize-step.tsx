@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -12,11 +14,13 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { previewHandwrittenText } from "@/lib/handwritingAI";
 import { personalizeText } from "@/lib/utils";
-import { Pencil, Settings, Image } from "lucide-react";
+import { Pencil, Settings, Image, FileText } from "lucide-react";
 import { Recipient, Template } from "@shared/schema";
 
 interface PersonalizeStepProps {
   campaignData: {
+    name: string;
+    description?: string;
     recipientIds: number[];
     templateId: number | null;
     handwritingStyle?: "casual" | "formal" | "elegant" | "neat" | "messy";
@@ -117,9 +121,59 @@ export function PersonalizeStep({
     );
   }
 
+  // Handle campaign name and description changes
+  const handleCampaignNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onUpdateCampaign({ ...campaignData, name: e.target.value });
+  };
+
+  const handleCampaignDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onUpdateCampaign({ ...campaignData, description: e.target.value });
+  };
+
   return (
     <div>
       <h2 className="text-xl font-semibold mb-6">Personalize Your Letters</h2>
+
+      {/* Campaign Details Card */}
+      <Card className="mb-6">
+        <CardContent className="p-6">
+          <h3 className="text-lg font-medium mb-4 flex items-center">
+            <FileText className="h-5 w-5 mr-2 text-neutral-500" />
+            Campaign Details
+          </h3>
+
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="campaign-name" className="text-sm font-medium block mb-2">
+                Campaign Name <span className="text-red-500">*</span>
+              </Label>
+              <Input 
+                id="campaign-name"
+                value={campaignData.name || ''} 
+                onChange={handleCampaignNameChange}
+                placeholder="Enter campaign name"
+                className="w-full"
+              />
+              <p className="text-xs text-neutral-500 mt-1">
+                Give your campaign a descriptive name to easily identify it later
+              </p>
+            </div>
+
+            <div>
+              <Label htmlFor="campaign-description" className="text-sm font-medium block mb-2">
+                Description (Optional)
+              </Label>
+              <Input 
+                id="campaign-description"
+                value={campaignData.description || ''} 
+                onChange={handleCampaignDescriptionChange}
+                placeholder="Enter a brief description of this campaign"
+                className="w-full"
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Settings Panel */}
