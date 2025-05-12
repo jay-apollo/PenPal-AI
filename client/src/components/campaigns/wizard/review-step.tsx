@@ -8,11 +8,11 @@ import { Recipient, Template } from "@shared/schema";
 
 interface ReviewStepProps {
   campaignData: {
-    name: string;
+    name?: string;
     description?: string;
     recipientIds: number[];
-    templateId: number;
-    startDate?: Date;
+    templateId: number | null;
+    startDate?: Date | null;
     handwritingStyle?: string;
     paperType?: string;
   };

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation, useParams } from "wouter";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { PageContainer } from "@/components/layout/page-container";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -11,6 +12,7 @@ import { ScheduleStep } from "@/components/campaigns/wizard/schedule-step";
 import { ReviewStep } from "@/components/campaigns/wizard/review-step";
 import { ChevronLeft, ChevronRight, Users, FileEdit, PenTool, Calendar, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Spinner } from "@/components/ui/spinner";
 
 const steps = [
   { id: "recipients", label: "Recipients", icon: Users },
@@ -19,6 +21,10 @@ const steps = [
   { id: "schedule", label: "Schedule", icon: Calendar },
   { id: "review", label: "Review", icon: CheckCircle },
 ];
+
+// Define types for handwriting style and paper type
+type HandwritingStyle = "casual" | "formal" | "elegant" | "neat" | "messy";
+type PaperType = "plain" | "lined" | "aged";
 
 // Initial campaign data
 const initialCampaignData = {
@@ -29,6 +35,8 @@ const initialCampaignData = {
   templateId: null as number | null,
   personalization: {},
   startDate: null as Date | null,
+  handwritingStyle: "casual" as HandwritingStyle, // Default handwriting style
+  paperType: "plain" as PaperType, // Default paper type
 };
 
 function CampaignWizard() {
@@ -136,6 +144,68 @@ function CampaignWizard() {
     }
   };
 
+  // Add a state for handling submission
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Create a mutation for creating campaigns
+  const { mutate: createCampaign } = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await fetch('/api/campaigns', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create campaign');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Campaign created",
+        description: "Your campaign has been created successfully.",
+      });
+      navigate('/campaigns');
+    },
+    onError: (error) => {
+      toast({
+        title: "Failed to create campaign",
+        description: error.message,
+        variant: "destructive",
+      });
+      setIsSubmitting(false);
+    }
+  });
+
+  // Handle form submission
+  const handleSubmitCampaign = () => {
+    if (!validateStep()) return;
+    
+    setIsSubmitting(true);
+    
+    // Prepare the campaign data for submission
+    // For this demo, we'll use a fixed userId of 1
+    const submissionData = {
+      userId: 1,
+      name: campaignData.name || `Campaign ${new Date().toLocaleDateString()}`,
+      description: campaignData.description || null,
+      status: "scheduled",
+      templateId: campaignData.templateId,
+      recipientIds: campaignData.recipientIds,
+      startDate: campaignData.startDate,
+      settings: {
+        handwritingStyle: campaignData.handwritingStyle as HandwritingStyle,
+        paperType: campaignData.paperType as PaperType
+      }
+    };
+    
+    createCampaign(submissionData);
+  };
+
   // Determine if the next button should show "Next" or "Create Campaign"
   const nextButtonText = currentStep === "review" ? "Create Campaign" : "Next";
 
@@ -192,7 +262,18 @@ function CampaignWizard() {
             <TabsContent value="review">
               <ReviewStep 
                 campaignData={campaignData}
-                onUpdateCampaign={updateCampaignData}
+                onEditSection={(section) => {
+                  // Map section names to step IDs
+                  const sectionToStep = {
+                    recipients: "recipients",
+                    template: "template",
+                    personalize: "personalize",
+                    schedule: "schedule",
+                    details: "personalize"
+                  };
+                  
+                  handleStepChange(sectionToStep[section] || "recipients");
+                }}
               />
             </TabsContent>
           </Tabs>
@@ -207,7 +288,11 @@ function CampaignWizard() {
               Previous
             </Button>
             
-            <Button onClick={handleNextClick}>
+            <Button 
+              onClick={currentStep === "review" ? handleSubmitCampaign : handleNextClick}
+              disabled={isSubmitting}
+            >
+              {isSubmitting && <Spinner size="sm" className="mr-2" />}
               {nextButtonText}
               {currentStep !== "review" && <ChevronRight className="w-4 h-4 ml-2" />}
             </Button>

@@ -41,19 +41,22 @@ export const getCampaign = async (req: Request, res: Response) => {
   }
 };
 
-// Create a new campaign
+// Create a new campaign (no auth for demo)
 export const createCampaign = async (req: Request, res: Response) => {
   try {
-    const userId = (req.user as any).id;
+    // Use userId from the request body instead of auth (for demo)
+    const userId = req.body.userId || 1;
     
     // Validate input using Zod schema
     const campaignSchema = insertCampaignSchema.extend({
       name: z.string().min(1, "Campaign name is required"),
     });
     
+    // Extract the main campaign fields from request body
     const validatedData = campaignSchema.parse({
       ...req.body,
-      userId, // Ensure userId is from the authenticated user
+      userId,
+      createdAt: new Date(),
     });
     
     const newCampaign = await storage.createCampaign(validatedData);
@@ -64,6 +67,7 @@ export const createCampaign = async (req: Request, res: Response) => {
       action: "create",
       entityType: "campaign",
       entityId: newCampaign.id,
+      createdAt: new Date(),
       metadata: { campaignName: newCampaign.name }
     });
     

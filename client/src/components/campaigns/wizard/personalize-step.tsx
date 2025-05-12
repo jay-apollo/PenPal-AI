@@ -18,9 +18,9 @@ import { Recipient, Template } from "@shared/schema";
 interface PersonalizeStepProps {
   campaignData: {
     recipientIds: number[];
-    templateId: number;
-    handwritingStyle?: string;
-    paperType?: string;
+    templateId: number | null;
+    handwritingStyle?: "casual" | "formal" | "elegant" | "neat" | "messy";
+    paperType?: "plain" | "lined" | "aged";
   };
   onUpdateCampaign: (data: any) => void;
 }
@@ -78,11 +78,15 @@ export function PersonalizeStep({
         selectedRecipient
       );
 
+      // Get handwriting style and paper type, ensuring they match the expected types
+      const style = (campaignData.handwritingStyle || "casual") as "casual" | "formal" | "elegant" | "neat" | "messy";
+      const paper = (campaignData.paperType || "plain") as "plain" | "lined" | "aged";
+
       // Generate a preview of the handwritten text
       const result = await previewHandwrittenText({
         text: personalizedContent,
-        style: campaignData.handwritingStyle || "casual",
-        paper: campaignData.paperType || "plain",
+        style,
+        paper,
       });
 
       setPreviewImageUrl(result.previewUrl);
