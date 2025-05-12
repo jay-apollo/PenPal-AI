@@ -3,11 +3,10 @@ import { z } from "zod";
 import { storage } from "../storage";
 import { insertRecipientSchema } from "@shared/schema";
 
-// Get all recipients for the current user
+// Get all recipients (no user filtering for demo)
 export const getRecipients = async (req: Request, res: Response) => {
   try {
-    const userId = (req.user as any).id;
-    const recipients = await storage.getRecipientsByUserId(userId);
+    const recipients = await storage.getAllRecipients();
     res.status(200).json({ recipients });
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch recipients", error: (error as Error).message });

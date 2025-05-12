@@ -3,21 +3,19 @@ import { z } from "zod";
 import { storage } from "../storage";
 import { insertTemplateSchema, insertLetterSchema } from "@shared/schema";
 
-// Get all templates for the current user
+// Get all templates (no user filtering for demo)
 export const getTemplates = async (req: Request, res: Response) => {
   try {
-    const userId = (req.user as any).id;
-    const templates = await storage.getTemplatesByUserId(userId);
+    const templates = await storage.getAllTemplates();
     res.status(200).json({ templates });
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch templates", error: (error as Error).message });
   }
 };
 
-// Get a specific template by ID
+// Get a specific template by ID (no user filtering for demo)
 export const getTemplate = async (req: Request, res: Response) => {
   try {
-    const userId = (req.user as any).id;
     const templateId = parseInt(req.params.id);
     
     if (isNaN(templateId)) {
@@ -28,11 +26,6 @@ export const getTemplate = async (req: Request, res: Response) => {
     
     if (!template) {
       return res.status(404).json({ message: "Template not found" });
-    }
-    
-    // Ensure user can only access their own templates
-    if (template.userId !== userId) {
-      return res.status(403).json({ message: "Forbidden" });
     }
     
     res.status(200).json({ template });

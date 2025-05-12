@@ -3,11 +3,11 @@ import { z } from "zod";
 import { storage } from "../storage";
 import { insertCampaignSchema } from "@shared/schema";
 
-// Get all campaigns for the current user
+// Get all campaigns (no user filtering for demo)
 export const getCampaigns = async (req: Request, res: Response) => {
   try {
-    const userId = (req.user as any).id;
-    const campaigns = await storage.getCampaignsByUserId(userId);
+    // For demo purposes, we'll return all campaigns 
+    const campaigns = await storage.getAllCampaigns();
     res.status(200).json({ campaigns });
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch campaigns", error: (error as Error).message });
