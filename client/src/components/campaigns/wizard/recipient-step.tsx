@@ -42,17 +42,17 @@ export function RecipientStep({
       ? selectedRecipientIds.filter(recId => recId !== id)
       : [...selectedRecipientIds, id];
     
-    onSelectRecipients(newSelection);
+    onUpdateSelection(newSelection);
   };
 
   // Select all recipients
   const selectAllRecipients = () => {
-    onSelectRecipients(filteredRecipients.map(recipient => recipient.id));
+    onUpdateSelection(filteredRecipients.map((recipient: Recipient) => recipient.id));
   };
 
   // Clear selection
   const clearSelection = () => {
-    onSelectRecipients([]);
+    onUpdateSelection([]);
   };
 
   return (

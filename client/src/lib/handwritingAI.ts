@@ -58,10 +58,13 @@ export async function exportLetter(
  * Note: In a real implementation, this would call an AI service API
  */
 export async function previewHandwrittenText(
-  text: string,
-  options: Partial<GenerateHandwritingOptions> = {}
-): Promise<string> {
-  // This is a mock function that would normally call an AI service
-  // For now, just return a placeholder URL
-  return `https://example.com/handwriting-preview?text=${encodeURIComponent(text)}&style=${options.style || 'casual'}`;
+  options: GenerateHandwritingOptions
+): Promise<{ previewUrl: string }> {
+  // This is a mock function that would normally call an AI service API
+  // For now, just return a placeholder URL with a delay to simulate network request
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  return {
+    previewUrl: `https://placehold.co/600x400/e2e8f0/1e293b?text=Handwritten+Preview+(${options.style || 'casual'}+style+on+${options.paper || 'plain'}+paper)`
+  };
 }
