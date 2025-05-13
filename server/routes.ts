@@ -7,6 +7,9 @@ import { Strategy as LocalStrategy } from "passport-local";
 import { z } from "zod";
 import { insertUserSchema } from "@shared/schema";
 import MemoryStore from "memorystore";
+import bcrypt from "bcrypt";
+import csurf from "csurf";
+import rateLimit from "express-rate-limit";
 
 // Import controllers
 import * as authController from "./controllers/auth";
@@ -14,25 +17,59 @@ import * as campaignController from "./controllers/campaigns";
 import * as recipientController from "./controllers/recipients";
 import * as templateController from "./controllers/templates";
 
+// Environment validation
+const requiredEnvVars = {
+  SESSION_SECRET: process.env.SESSION_SECRET,
+  NODE_ENV: process.env.NODE_ENV
+};
+
+Object.entries(requiredEnvVars).forEach(([key, value]) => {
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${key}`);
+  }
+});
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup session store
   const MemoryStoreSession = MemoryStore(session);
   
+  // Rate limiting
+  const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100 // limit each IP to 100 requests per windowMs
+  });
+
   app.use(
     session({
-      cookie: { maxAge: 86400000 }, // 1 day
+      cookie: { 
+        maxAge: 86400000, // 1 day
+        secure: process.env.NODE_ENV === "production",
+        httpOnly: true,
+        sameSite: "strict"
+      },
       store: new MemoryStoreSession({
         checkPeriod: 86400000, // prune expired entries every 24h
       }),
       resave: false,
       saveUninitialized: false,
-      secret: process.env.SESSION_SECRET || "penpal-ai-secret",
+      secret: process.env.SESSION_SECRET!,
+      name: "sessionId" // Don't use the default 'connect.sid'
     })
   );
 
   // Initialize passport and session
   app.use(passport.initialize());
   app.use(passport.session());
+
+  // Apply rate limiting to auth routes
+  app.use("/api/auth", limiter);
+
+  // Apply CSRF protection
+  app.use(csurf());
+  app.use((req: Request, res: Response, next: Function) => {
+    res.cookie("XSRF-TOKEN", req.csrfToken());
+    next();
+  });
 
   // Configure passport local strategy
   passport.use(
@@ -43,8 +80,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return done(null, false, { message: "Incorrect username." });
         }
         
-        // In a real app, you would use bcrypt to compare hashed passwords
-        if (user.password !== password) {
+        const isValidPassword = await bcrypt.compare(password, user.password);
+        if (!isValidPassword) {
           return done(null, false, { message: "Incorrect password." });
         }
         
